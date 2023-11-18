@@ -51,7 +51,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(322, 59);
+            button2.Location = new Point(405, 59);
             button2.Name = "button2";
             button2.Size = new Size(75, 23);
             button2.TabIndex = 1;
@@ -60,7 +60,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(535, 61);
+            button3.Location = new Point(706, 59);
             button3.Name = "button3";
             button3.Size = new Size(75, 23);
             button3.TabIndex = 2;
@@ -89,7 +89,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(636, 132);
+            label3.Location = new Point(732, 132);
             label3.Name = "label3";
             label3.Size = new Size(30, 15);
             label3.TabIndex = 5;
@@ -102,7 +102,7 @@
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;
             textBox1.ScrollBars = ScrollBars.Vertical;
-            textBox1.Size = new Size(221, 276);
+            textBox1.Size = new Size(246, 450);
             textBox1.TabIndex = 6;
             // 
             // textBox2
@@ -112,17 +112,17 @@
             textBox2.Name = "textBox2";
             textBox2.ReadOnly = true;
             textBox2.ScrollBars = ScrollBars.Vertical;
-            textBox2.Size = new Size(213, 276);
+            textBox2.Size = new Size(279, 450);
             textBox2.TabIndex = 7;
             // 
             // textBox3
             // 
-            textBox3.Location = new Point(553, 162);
+            textBox3.Location = new Point(588, 162);
             textBox3.Multiline = true;
             textBox3.Name = "textBox3";
             textBox3.ReadOnly = true;
             textBox3.ScrollBars = ScrollBars.Vertical;
-            textBox3.Size = new Size(207, 276);
+            textBox3.Size = new Size(316, 450);
             textBox3.TabIndex = 8;
             // 
             // Form1

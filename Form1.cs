@@ -74,12 +74,12 @@ namespace DNSAuflösungHTMLTags
             {
                 textBox1.BeginInvoke((MethodInvoker)delegate
                 {
-                    textBox1.Text += text;
+                    textBox1.AppendText(text + Environment.NewLine);
                 });
             }
             else
             {
-                textBox1.Text += text;
+                textBox1.AppendText(text + Environment.NewLine);
             }
         }
         private void UpdateTextBox2(string text)
@@ -88,12 +88,12 @@ namespace DNSAuflösungHTMLTags
             {
                 textBox2.BeginInvoke((MethodInvoker)delegate
                 {
-                    textBox2.Text += text;
+                    textBox2.AppendText(text + Environment.NewLine);
                 });
             }
             else
             {
-                textBox2.Text += text;
+                textBox2.AppendText(text + Environment.NewLine);
             }
         }
 
@@ -103,12 +103,12 @@ namespace DNSAuflösungHTMLTags
             {
                 textBox3.BeginInvoke((MethodInvoker)delegate
                 {
-                    textBox3.Text += text;
+                    textBox3.AppendText(text + Environment.NewLine);
                 });
             }
             else
             {
-                textBox3.Text += text;
+                textBox3.AppendText(text + Environment.NewLine);
             }
         }
         
