@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,25 +14,26 @@ namespace DNSAuflösungHTMLTags
 {
     public partial class Form1 : Form
     {
+        private CancellationTokenSource cts;
         public Form1()
         {
             InitializeComponent();
+            cts = new CancellationTokenSource();
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            // Logik für "Textdatei öffnen"
+           
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                //textBox1.Text = ofd.FileName;
 
                 string filePath = ofd.FileName;
                 string[] addresses = File.ReadAllLines(filePath);
 
                 foreach (string address in addresses)
                 {
-                    // Запускаем задачу для каждого адреса
-                    Task.Run(() => ProcessAddress(address)).Wait();
+
+                    Task.Run(() => ProcessAddress(address, cts.Token)).Wait();
                 }
             }
             else
@@ -40,34 +42,39 @@ namespace DNSAuflösungHTMLTags
             }
         }
 
-        private void ProcessAddress(string address)
+        private void ProcessAddress(string address, CancellationToken t)
         {
             try
             {
-              
+
                 IPHostEntry host = Dns.GetHostEntry(address);
 
-               string dnsAddress = address;
+                string dnsAddress = address;
                 UpdateTextBox1($"{dnsAddress}");
 
-               string ipAddresses = string.Join(", ", host.AddressList.Select(ip => ip.ToString()));
+                string ipAddresses = string.Join(", ", host.AddressList.Select(ip => ip.ToString()));
                 UpdateTextBox2($"{ipAddresses}");
 
 
                 using (HttpClient client = new HttpClient())
                 {
                     string html = client.GetStringAsync($"http://{address}").Result;
+                    string pattern = @"<(html|table|script)[^>]*>";
+                    MatchCollection matches = Regex.Matches(html, pattern, RegexOptions.Singleline);
+                    foreach (Match match in matches)
+                    {
+                        UpdateTextBox3($"{match.Value}");
+                    }
 
-                    UpdateTextBox3($"{html}");
                 }
             }
             catch (Exception ex)
             {
-                // Обрабатываем ошибку, например, выводим ее в консоль
+
                 Console.WriteLine($"Error processing {address}: {ex.Message}");
             }
         }
-        
+
         private void UpdateTextBox1(string text)
         {
             if (textBox1.InvokeRequired)
@@ -111,12 +118,11 @@ namespace DNSAuflösungHTMLTags
                 textBox3.AppendText(text + Environment.NewLine);
             }
         }
-        
+
 
         private void button2_Click(object sender, EventArgs e)
         {
-            // Logik für "Abbrechen"
-            // Code
+            cts.Cancel();
         }
 
         private void button3_Click(object sender, EventArgs e)
