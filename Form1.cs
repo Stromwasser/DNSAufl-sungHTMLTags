@@ -39,17 +39,21 @@ namespace DNSAuflösungHTMLTags
 
                 foreach (string address in addresses)
                 {
-                    tasks.Add(Task.Run(() => ProcessAddress(address, cts.Token)));
+                    
+                    Task ipTask = Task.Run(() => ProcessIPAddress(address, cts.Token));
+                    Task htmlTask = Task.Run(() => ProcessHTML(address, cts.Token));
+
+                    
+                    tasks.Add(ipTask);
+                    tasks.Add(htmlTask);
+
                     Application.DoEvents();
                 }
 
-                Task.WhenAll(tasks).ContinueWith(_ =>
-                {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        this.Cursor = Cursors.Default;
-                    });
-                });
+                
+                Task.WaitAll(tasks.ToArray());
+
+                this.Cursor = Cursors.Default;
             }
             else
             {
@@ -58,7 +62,7 @@ namespace DNSAuflösungHTMLTags
             }
         }
 
-        private void ProcessAddress(string address, CancellationToken t)
+        private void ProcessIPAddress(string address, CancellationToken t)
         {
             try
             {
@@ -69,21 +73,33 @@ namespace DNSAuflösungHTMLTags
                 UpdateTextBox1($"{dnsAddress}");
 
                 string ipAddresses = string.Join(", ", host.AddressList.Select(ip => ip.ToString()));
-                UpdateTextBox2($"{ipAddresses}");
+                UpdateTextBox2($"{dnsAddress} - {ipAddresses}");
+            }
+            catch (OperationCanceledException)
+            {
+                MessageBox.Show("Der Vorgang wurde vom Benutzer abgebrochen.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error processing {address}: {ex.Message}");
+            }
+        }
 
-
+        private void ProcessHTML(string address, CancellationToken t)
+        {
+            try
+            {
                 using (HttpClient client = new HttpClient())
                 {
                     t.ThrowIfCancellationRequested();
                     string html = client.GetStringAsync($"http://{address}").Result;
                     string pattern = @"<(html|table|script)[^>]*>";
                     MatchCollection matches = Regex.Matches(html, pattern, RegexOptions.Singleline);
-                    foreach (Match match in matches)
-                    {
-                        t.ThrowIfCancellationRequested();
-                        UpdateTextBox3($"{match.Value}");
-                    }
 
+                    int tagCount = matches.Count; //TagsZähler
+
+                    t.ThrowIfCancellationRequested();
+                    UpdateTextBox3($"Tag count for {address}:{Environment.NewLine}{tagCount}");
                 }
             }
             catch (OperationCanceledException)
@@ -94,7 +110,6 @@ namespace DNSAuflösungHTMLTags
             {
                 Console.WriteLine($"Error processing {address}: {ex.Message}");
             }
-
         }
 
         private void UpdateTextBox1(string text)
@@ -155,5 +170,9 @@ namespace DNSAuflösungHTMLTags
             textBox3.Text = string.Empty;
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
