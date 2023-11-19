@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
-            button2 = new Button();
-            button3 = new Button();
+            Dateiöffnen = new Button();
+            Abbrechen = new Button();
+            Reinigen = new Button();
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
@@ -39,34 +39,35 @@
             textBox3 = new TextBox();
             SuspendLayout();
             // 
-            // button1
+            // Dateiöffnen
             // 
-            button1.Location = new Point(91, 57);
-            button1.Name = "button1";
-            button1.Size = new Size(114, 23);
-            button1.TabIndex = 0;
-            button1.Text = "Textdatei öffnen";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            Dateiöffnen.Location = new Point(91, 57);
+            Dateiöffnen.Name = "Dateiöffnen";
+            Dateiöffnen.Size = new Size(114, 23);
+            Dateiöffnen.TabIndex = 0;
+            Dateiöffnen.Text = "Textdatei öffnen";
+            Dateiöffnen.UseVisualStyleBackColor = true;
+            Dateiöffnen.Click += button1_Click;
             // 
-            // button2
+            // Abbrechen
             // 
-            button2.Location = new Point(405, 59);
-            button2.Name = "button2";
-            button2.Size = new Size(75, 23);
-            button2.TabIndex = 1;
-            button2.Text = "Abbrechen";
-            button2.UseVisualStyleBackColor = true;
+            Abbrechen.Location = new Point(405, 59);
+            Abbrechen.Name = "Abbrechen";
+            Abbrechen.Size = new Size(75, 23);
+            Abbrechen.TabIndex = 1;
+            Abbrechen.Text = "Abbrechen";
+            Abbrechen.UseVisualStyleBackColor = true;
+            Abbrechen.Click += button2_Click;
             // 
-            // button3
+            // Reinigen
             // 
-            button3.Location = new Point(706, 59);
-            button3.Name = "button3";
-            button3.Size = new Size(75, 23);
-            button3.TabIndex = 2;
-            button3.Text = "Reinigen";
-            button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
+            Reinigen.Location = new Point(706, 59);
+            Reinigen.Name = "Reinigen";
+            Reinigen.Size = new Size(75, 23);
+            Reinigen.TabIndex = 2;
+            Reinigen.Text = "Reinigen";
+            Reinigen.UseVisualStyleBackColor = true;
+            Reinigen.Click += button3_Click;
             // 
             // label1
             // 
@@ -136,9 +137,9 @@
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
-            Controls.Add(button3);
-            Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(Reinigen);
+            Controls.Add(Abbrechen);
+            Controls.Add(Dateiöffnen);
             Name = "Form1";
             Text = "Form1";
             ResumeLayout(false);
@@ -147,9 +148,9 @@
 
         #endregion
 
-        private Button button1;
-        private Button button2;
-        private Button button3;
+        private Button Dateiöffnen;
+        private Button Abbrechen;
+        private Button Reinigen;
         private Label label1;
         private Label label2;
         private Label label3;

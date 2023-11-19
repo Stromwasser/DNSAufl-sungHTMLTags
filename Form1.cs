@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -15,30 +18,43 @@ namespace DNSAuflösungHTMLTags
     public partial class Form1 : Form
     {
         private CancellationTokenSource cts;
+        private List<Task> tasks;
+
         public Form1()
         {
             InitializeComponent();
             cts = new CancellationTokenSource();
+            tasks = new List<Task>();
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
-           
+            this.Cursor = Cursors.WaitCursor;
+
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-
                 string filePath = ofd.FileName;
                 string[] addresses = File.ReadAllLines(filePath);
 
                 foreach (string address in addresses)
                 {
-
-                    Task.Run(() => ProcessAddress(address, cts.Token)).Wait();
+                    tasks.Add(Task.Run(() => ProcessAddress(address, cts.Token)));
+                    Application.DoEvents();
                 }
+
+                Task.WhenAll(tasks).ContinueWith(_ =>
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        this.Cursor = Cursors.Default;
+                    });
+                });
             }
             else
             {
                 textBox1.Text = "Keine Datei ausgewählt";
+                this.Cursor = Cursors.Default;
             }
         }
 
@@ -46,7 +62,7 @@ namespace DNSAuflösungHTMLTags
         {
             try
             {
-
+                t.ThrowIfCancellationRequested();
                 IPHostEntry host = Dns.GetHostEntry(address);
 
                 string dnsAddress = address;
@@ -58,21 +74,27 @@ namespace DNSAuflösungHTMLTags
 
                 using (HttpClient client = new HttpClient())
                 {
+                    t.ThrowIfCancellationRequested();
                     string html = client.GetStringAsync($"http://{address}").Result;
                     string pattern = @"<(html|table|script)[^>]*>";
                     MatchCollection matches = Regex.Matches(html, pattern, RegexOptions.Singleline);
                     foreach (Match match in matches)
                     {
+                        t.ThrowIfCancellationRequested();
                         UpdateTextBox3($"{match.Value}");
                     }
 
                 }
             }
+            catch (OperationCanceledException)
+            {
+                MessageBox.Show("Der Vorgang wurde vom Benutzer abgebrochen.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
             catch (Exception ex)
             {
-
                 Console.WriteLine($"Error processing {address}: {ex.Message}");
             }
+
         }
 
         private void UpdateTextBox1(string text)
@@ -132,5 +154,6 @@ namespace DNSAuflösungHTMLTags
             textBox2.Text = string.Empty;
             textBox3.Text = string.Empty;
         }
+
     }
 }
